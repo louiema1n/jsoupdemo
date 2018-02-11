@@ -3,6 +3,7 @@ package com.lm.jsoupdemo.Utils;
 import cn.edu.hfut.dmic.webcollector.model.CrawlDatums;
 import cn.edu.hfut.dmic.webcollector.model.Page;
 import cn.edu.hfut.dmic.webcollector.plugin.berkeley.BreadthCrawler;
+import org.jsoup.select.Elements;
 
 /**
  * @description
@@ -13,11 +14,12 @@ public class AutoNewsCrawler extends BreadthCrawler {
     public AutoNewsCrawler(String crawlPath, boolean autoParse) {
         super(crawlPath, autoParse);
         // 起始页面
-        this.addSeed("http://news.163.com/");
-        /*抓取链接(-.*) http://news.hfut.edu.cn/show-xxxxxx.html*/
+        this.addSeed("https://zhibo.sogou.com/");
+        /*抓取链接(.*) http://news.hfut.edu.cn/show-xxxxxx.html*/
 //        this.addRegex("http://news.hfut.edu.cn/show-.*html");
-        this.addRegex("http://news.163.com/.*html");
-        /*不抓取(-.*.*) jpg|png|gif*/
+        this.addRegex("http://zhibo.sogou.com/.*whtml");
+        this.addRegex("http://www.huya.com/.*?ptag=gouzai");
+        /*不抓取(.*.*) jpg|png|gif*/
         this.addRegex("-.*\\.(jpg|png|gif).*");
         /*不抓取 #*/
         this.addRegex("-.*#.*");
@@ -31,15 +33,19 @@ public class AutoNewsCrawler extends BreadthCrawler {
     public void visit(Page page, CrawlDatums next) {
         String url = page.url();
         /*if page is news page*/
-        if (page.matchUrl("http://news.163.com/.*html")) {
+        if (page.matchUrl("http://zhibo.sogou.com/gameZone_英雄联盟.whtml")) {
 
             /*extract title and content of news by css selector*/
-            String title = page.select("#targetContent>div:nth-child(1)>div>p>a").text();
-            String content = page.select("#targetContent>div:nth-child(1)>div>p>a").attr("href");
+            Elements elements = page.select("#targetContent>div>div>p>a");
+            for (int i = 0; i < elements.size(); i++) {
+                String title = elements.get(i).text();
+                String content = elements.get(i).attr("href");
 
-            System.out.println("URL:\n" + url);
-            System.out.println("title:\n" + title);
-            System.out.println("content:\n" + content);
+                System.out.println("URL:\n" + url);
+                System.out.println("title:\n" + title);
+                System.out.println("content:\n" + content);
+            }
+
 
             /*If you want to add urls to crawl,add them to nextLink*/
             /*WebCollector automatically filters links that have been fetched before*/
@@ -52,6 +58,6 @@ public class AutoNewsCrawler extends BreadthCrawler {
     public static void main(String[] args) throws Exception {
         AutoNewsCrawler crawler = new AutoNewsCrawler("crawl", true);
         // 开启深度为n爬虫
-        crawler.start(2);
+        crawler.start(3);
     }
 }
