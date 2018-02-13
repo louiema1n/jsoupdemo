@@ -63,11 +63,13 @@ public class Result {
 
     public static void main(String[] args) {
         OOSpider.create(Site.me()
-                .setRetryTimes(3).
-                setSleepTime(1000).
-                setTimeOut(5000).
-                addHeader("Accept-Encoding", "/").
-                setUserAgent("Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html）"), new DataHandlePiple(), Result.class)
+                .setRetryTimes(3)
+                .setSleepTime(1000)
+                .setTimeOut(5000)
+                .addHeader("Accept-Encoding", "/")
+                .setUserAgent("Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html）")
+                , new DataHandlePiple()
+                , Result.class)
                 .addUrl("https://zhibo.sogou.com/")
                 .thread(5)
                 .run();
